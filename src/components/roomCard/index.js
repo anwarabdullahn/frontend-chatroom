@@ -19,12 +19,20 @@ export default function index(props) {
           <div className="d-flex align-items-center justify-content-between mb-1">
             <h6 className={classnames('mb-0', {
               'text-muted': !props.active,
+              'text-white': props.active,
             })}>{props.name}</h6>
             <small className={classnames('small font-weight-bold', {
               'text-muted': !props.active,
             })}>{props.date}</small>
           </div>
-          <p className={messageClassName}>{props.message}</p>
+          <p className={messageClassName} style={{
+            lineHeight: '1.5em',
+            height: '3em',
+            overflow: 'hidden',
+            whiteSpace: 'wrap',
+            textOverflow: 'ellipsis',
+            width: '100%',
+          }}>{props.message}</p>
         </Media>
       </Media>
     </a>

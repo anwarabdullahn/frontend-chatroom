@@ -1,14 +1,31 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { setToken } from '../../utils/api';
+import { isEmpty } from 'lodash';
+import { setCurrentUser, logoutUserSuccess } from '../../redux/auth/action';
 
-const PrivateComponent = ({ component: Component, auth, ...rest }) => (
-	// <Route {...rest} render={(props) => (auth.isAuthenticated ? <Component {...props} /> : <Redirect to="/" />)} />
-	<Route {...rest} render={(props) => <Component {...props} />} />
-);
+class PrivateRoute extends Component {
+	componentDidMount() {
+		const token = localStorage.getItem('token');
+		if (!isEmpty(token)) {
+			this.props.setCurrentUser();
+			setToken(token);
+		} else {
+			this.props.logoutUserSuccess();
+		}
+	}
 
-const mapStateToProps = (state) => ({
-	auth: state.auth
-});
+	render() {
+		const Component = this.props.component;
+		return (
+			<Route {...this.props} render={() => (this.props.isAuthenticated ? <Component {...this.props} /> : <Redirect to="/" />)} />
+		);
+	}
+}
 
-export default connect(mapStateToProps)(PrivateComponent);
+const mapStateToProps = state => ({
+	isAuthenticated: state.auth.isAuthenticated,
+})
+
+export default connect(mapStateToProps, { setCurrentUser, logoutUserSuccess })(PrivateRoute);
