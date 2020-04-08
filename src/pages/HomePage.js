@@ -108,16 +108,16 @@ class HomePage extends Component {
                         key={item._id}
                         message={(item.conversation[0] && item.conversation.slice(-1)[0].text) || 'Not Conversation Yet'}
                         name={item.name}
-                        date={moment((item.conversation[0] && item.conversation[0].createdAt) || item.createdAt).startOf('hour').fromNow()}
+                        date={moment((item.conversation[0] && item.conversation[0].createdAt) || item.createdAt).fromNow()}
                         active={item._id === this.props.selectedRoomId}
                       />
                     )
                   }) : (<RoomCard
-                    onClick={() => {}}
+                    onClick={() => { }}
                     key={1}
                     message={'You need to create or join Room'}
                     name={'Admin'}
-                    date={moment(new Date()).startOf('hour').fromNow()}
+                    date={moment(new Date()).fromNow()}
                     active={true}
                   />)}
                 </div>

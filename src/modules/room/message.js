@@ -9,7 +9,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import io from 'socket.io-client';
 import { BASE_URL } from '../../utils/api';
 import { isEmpty } from 'lodash';
-import openNotification, { TYPE as NOTIF_TYPE }  from '../../utils/notification';
+import openNotification, { TYPE as NOTIF_TYPE } from '../../utils/notification';
 
 let socket;
 
@@ -42,7 +42,7 @@ class Message extends Component {
         }
       }
     });
-    
+
     this.scrollToBottom();
   }
 
@@ -92,7 +92,7 @@ class Message extends Component {
                 key={item._id}
                 mine={item.sender._id === user._id}
                 message={item.text}
-                date={moment(item.createdAt).startOf('hour').fromNow()}
+                date={moment(item.createdAt).fromNow()}
                 senderName={item.sender.name || false}
               />
             )
@@ -103,7 +103,7 @@ class Message extends Component {
             <Input type="text" placeholder="Type a message" disabled={this.props.selectedRoomId === ''} className="rounded-0 border-0 py-4 bg-light" name="text" onChange={this.onChange} value={text} />
             <InputGroupAddon addonType="append">
               <Button id="button-addon2" type="submit" active disabled={this.props.selectedRoomId === ''} onClick={this.onSendMessage}>
-                {isSendMessageLoading ? <Spinner size="sm" color="primary" /> : <FontAwesomeIcon icon={faPaperPlane} /> }
+                {isSendMessageLoading ? <Spinner size="sm" color="primary" /> : <FontAwesomeIcon icon={faPaperPlane} />}
               </Button>
             </InputGroupAddon>
           </InputGroup>
