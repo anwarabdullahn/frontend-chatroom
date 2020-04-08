@@ -31,7 +31,6 @@ class RegisterPages extends Component {
 
   render() {
     const { name, email } = this.state;
-    console.warn(this.props, 'this.props.register');
     return (
       <CustomContainer className="text-center">
         <Form style={{

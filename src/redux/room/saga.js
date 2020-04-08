@@ -24,7 +24,6 @@ function* watchGetRoomMessageRequest() {
 // }
 
 function* createRoom(data) {
-  console.log('function* createRoom(data) {')
   try {
     const result = yield RoomService.createRoom(data);
     const res = result.data;
@@ -41,8 +40,7 @@ function* getRoom(data) {
     const result = yield RoomService.getRoom(data);
     const res = result.data;
     yield put(getRoomSuccess(res.data));
-  } catch (err) {
-    console.log(err, 'err')
+  } catch {
     openNotification(NOTIF_TYPE.WARNING, 'You dont have any room!');
   }
 }
@@ -63,7 +61,6 @@ function* roomMessage(data) {
   try {
     const result = yield RoomService.roomMessage(data);
     const res = result.data;
-    console.log(res, 'res')
     yield put(addRoomMessage(res.data));
   } catch (error) {
     const err = error.response;
