@@ -16,7 +16,7 @@ export default function index(props) {
       <Media className="w-50 mb-3">
         <img
           className="rounded-circle align-self-center"
-          src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg"
+          src={`https://ui-avatars.com/api/?name=${props.senderName}`}
           alt="user"
           width="50"
         />

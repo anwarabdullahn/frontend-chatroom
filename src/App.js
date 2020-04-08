@@ -12,7 +12,7 @@ export default () => {
       <Provider store={store}>
         <Route path="/" exact component={LoginPages} />
         <Route path="/register" exact component={RegisterPage} />
-        <Route path="/home" exact component={HomePage} exact />
+        <Route path="/home" exact component={HomePage} />
       </Provider>
     </Router>
   );

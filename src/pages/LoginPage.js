@@ -4,7 +4,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom';
 import { CustomContainer } from '../components';
 import { setLoginUser, setCurrentUser } from '../redux/auth/action';
-import { Button, Form, Input } from 'reactstrap';
+import { Button, Form, Input, Spinner } from 'reactstrap';
 import { connect } from 'react-redux';
 
 class LoginPages extends Component {
@@ -12,7 +12,6 @@ class LoginPages extends Component {
     super();
     this.state = {
       email: '',
-      name: ''
     }
   }
 
@@ -30,9 +29,7 @@ class LoginPages extends Component {
   }
 
   render() {
-    const { email, name } = this.state;
-    console.warn(this.props, 'this.props.login');
-
+    const { email } = this.state;
     return (
       <CustomContainer className="text-center">
         <Form style={{
@@ -46,9 +43,11 @@ class LoginPages extends Component {
           onSubmit={this.onSubmit}
         >
           <FontAwesomeIcon icon={faPaperPlane} size="6x" color="#007bff" />
-          <Input type="text" className="form-control mt-4 mb-2" placeholder="Name" value={name} name="name" onChange={this.onChange} />
           <Input type="email" className="form-control my-2" placeholder="Email" value={email} name="email" onChange={this.onChange} />
-          <Button block={true} color="primary" type="submit" size="lg">Sign in</Button>
+          <Button block={true} disabled={this.props.isLoading} color="primary" type="submit" size="lg">
+            {this.props.isLoading &&
+              <Spinner size="sm" color="secondary" />} Sign in
+          </Button>
           <div className="my-3">
             <Link className="my-5 text-muted" to="/register">I've no Account</Link>
           </div>
@@ -65,6 +64,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
+  isLoading: state.auth.isLoading || false,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginPages);

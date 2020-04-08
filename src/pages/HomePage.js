@@ -1,19 +1,77 @@
 import React, { Component } from 'react'
-import { UncontrolledTooltip, Row, Col, Form, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
+import { Row, Col, Form, Button, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane, faPlus, faSearch, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import { CustomContainer, RoomCard, TextBubble } from '../components';
+import { faPlus, faSearch, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { CustomContainer, RoomCard } from '../components';
 import { connect } from 'react-redux';
 import { logoutUser } from '../redux/auth/action';
+import { Tooltip } from 'antd';
+import RoomModule from '../modules/room';
+import { createNewRoom, getMyRoom, setSelectedRoom, joinNewRoom } from '../redux/room/action';
+import moment from 'moment';
+
+const MODAL_TYPE = {
+  NEW_ROOM: 'NEW_ROOM',
+  JOIN_ROOM: 'JOIN_ROOM',
+}
 
 class HomePage extends Component {
+  constructor() {
+    super();
+    this.state = {
+      modalType: MODAL_TYPE.DISMISS,
+      isModalOpen: false,
+      name: '',
+      roomPage: 1,
+    }
+  };
+
+  componentDidMount() {
+    this.props.getMyRoom({ page: this.state.roomPage })
+  }
+
+  toggleDismiss = () => {
+    this.setState({
+      isModalOpen: false,
+    });
+  }
+
+  toggleNewRoom = () => {
+    this.setState({
+      modalType: MODAL_TYPE.NEW_ROOM,
+      isModalOpen: true,
+      name: '',
+    });
+  }
+
+  toggleJoinRoom = () => {
+    this.setState({
+      modalType: MODAL_TYPE.JOIN_ROOM,
+      isModalOpen: true,
+      name: '',
+    });
+  }
 
   onLogout = () => {
     this.props.logoutUser();
     this.props.history.push('/');
   }
 
+  onChange = e => this.setState({ [e.target.name]: e.target.value });
+
+  onSubmit = (e) => {
+    e.preventDefault();
+    const { name, modalType } = this.state;
+    if (modalType === MODAL_TYPE.NEW_ROOM) {
+      this.props.createNewRoom({ name });
+    } else {
+      this.props.joinNewRoom({ name });
+    }
+    this.setState({ name: '' });
+  }
+
   render() {
+    const { name, isModalOpen, modalType } = this.state;
     return (
       <CustomContainer>
         <Row className="overflow-hidden shadow" style={{ borderRadius: '0.5rem' }}>
@@ -26,18 +84,15 @@ class HomePage extends Component {
                   position: 'absolute',
                   marginRight: '20px',
                 }}>
-                  <FontAwesomeIcon icon={faSignOutAlt} id="exit" onClick={this.onLogout} />
-                  <UncontrolledTooltip placement="top" target="exit">
-                    Log Out
-                  </UncontrolledTooltip >
-                  <FontAwesomeIcon className="mx-3" icon={faPlus} id="createRoom" />
-                  <UncontrolledTooltip placement="top" target="createRoom">
-                    Create Room
-                  </UncontrolledTooltip >
-                  <FontAwesomeIcon icon={faSearch} id="findRoom" />
-                  <UncontrolledTooltip placement="top" target="findRoom">
-                    Find Room
-                  </UncontrolledTooltip >
+                  <Tooltip title="Log Out">
+                    <FontAwesomeIcon icon={faSignOutAlt} id="exit" onClick={this.onLogout} />
+                  </Tooltip>
+                  <Tooltip title="Create Room">
+                    <FontAwesomeIcon className="mx-3" icon={faPlus} onClick={this.toggleNewRoom} />
+                  </Tooltip>
+                  <Tooltip title="Join Room">
+                    <FontAwesomeIcon icon={faSearch} onClick={this.toggleJoinRoom} />
+                  </Tooltip>
                 </div>
               </div>
               <div style={{
@@ -46,44 +101,48 @@ class HomePage extends Component {
                 backgroundColor: '#cecece'
               }}>
                 <div className="list-group rounded-0">
-                  <RoomCard
-                    message="Message MessageMessageMessageMessageMessage Message Message Message Message Message MesMessageMessageMessage Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message Message"
-                    name="Name"
-                    date="14 Des"
+                  {this.props.rooms.length > 0 ? this.props.rooms.map((item) => {
+                    return (
+                      <RoomCard
+                        onClick={() => this.props.setSelectedRoom(item)}
+                        key={item._id}
+                        message={(item.conversation[0] && item.conversation.slice(-1)[0].text) || 'Not Conversation Yet'}
+                        name={item.name}
+                        date={moment((item.conversation[0] && item.conversation[0].createdAt) || item.createdAt).startOf('hour').fromNow()}
+                        active={item._id === this.props.selectedRoomId}
+                      />
+                    )
+                  }) : (<RoomCard
+                    onClick={() => {}}
+                    key={1}
+                    message={'You need to create or join Room'}
+                    name={'Admin'}
+                    date={moment(new Date()).startOf('hour').fromNow()}
                     active={true}
-                  />
-                  <RoomCard
-                    message="Message"
-                    name="Name"
-                    date="14 Des"
-                  />
+                  />)}
                 </div>
               </div>
+              <div className="bg-light px-4 py-5 d-flex" />
             </div>
           </Col>
           <Col sm={7} className="px-0">
-            <div className="px-4 py-5 chat-box bg-white" style={{ overflowY: 'scroll', height: '700px' }}>
-              <TextBubble
-                mine={true}
-                message="Hallo"
-                date="14 des"
-              />
-              <TextBubble
-                message="Hallo 2"
-                date="15 des"
-                senderName="Anwar"
-              />
-            </div>
-            <Form action="#" className="bg-light">
-              <InputGroup>
-                <Input type="text" placeholder="Type a message" aria-describedby="button-addon2" className="rounded-0 border-0 py-4 bg-light" />
-                <InputGroupAddon addonType="append">
-                  <Button id="button-addon2" type="submit" active> <FontAwesomeIcon icon={faPaperPlane} /></Button>
-                </InputGroupAddon>
-              </InputGroup>
-            </Form>
+            <RoomModule.Message selectedRoom={this.props.selectedRoom} />
           </Col>
         </Row>
+        <Modal isOpen={isModalOpen} toggle={this.toggleDismiss}>
+          <Form onSubmit={this.onSubmit}>
+            <ModalHeader toggle={this.toggleDismiss} close={(
+              <button className="close" onClick={this.toggleDismiss}>&times;</button>
+            )}>{modalType === MODAL_TYPE.NEW_ROOM ? "Create Room" : "Join Room"}</ModalHeader>
+            <ModalBody>
+              <Input type="text" className="form-control" placeholder="Name" value={name} name="name" onChange={this.onChange} />
+            </ModalBody>
+            <ModalFooter>
+              <Button color="primary" type="submit" onClick={this.toggleDismiss}>Submit</Button>
+              <Button color="secondary" onClick={this.toggleDismiss}>Cancel</Button>
+            </ModalFooter>
+          </Form>
+        </Modal>
       </CustomContainer>
     );
   }
@@ -92,6 +151,19 @@ class HomePage extends Component {
 
 const mapDispatchToProps = {
   logoutUser,
+  createNewRoom,
+  getMyRoom,
+  setSelectedRoom,
+  joinNewRoom,
 }
 
-export default connect(null, mapDispatchToProps)(HomePage)
+const mapStateToProps = state => {
+  const roomState = state.room;
+  return {
+    rooms: roomState.rooms || [],
+    selectedRoomId: roomState.selectedRoomId,
+  }
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage)

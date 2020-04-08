@@ -12,9 +12,9 @@ export default function index(props) {
   });
 
   return (
-    <a className={outerClassName}>
+    <div className={outerClassName} onClick={props.onClick}>
       <Media className="media">
-        <img src="https://res.cloudinary.com/mhmd/image/upload/v1564960395/avatar_usae7z.svg" alt="user" width="50" className="rounded-circle" />
+        <img src="https://image.flaticon.com/icons/svg/166/166258.svg" alt="user" width="50" className="rounded-circle" />
         <Media body className="ml-4">
           <div className="d-flex align-items-center justify-content-between mb-1">
             <h6 className={classnames('mb-0', {
@@ -35,7 +35,7 @@ export default function index(props) {
           }}>{props.message}</p>
         </Media>
       </Media>
-    </a>
+    </div>
   )
 }
 
@@ -44,6 +44,7 @@ index.propTypes = {
   name: PropTypes.string,
   message: PropTypes.string,
   date: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 index.defaultProps = {
@@ -51,4 +52,5 @@ index.defaultProps = {
   name: null,
   message: null,
   date: null,
+  onClick: null,
 }

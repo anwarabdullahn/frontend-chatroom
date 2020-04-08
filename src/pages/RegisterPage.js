@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom';
 import { CustomContainer } from '../components';
-import { Button, Form, Input } from 'reactstrap';
+import { Button, Form, Input, Spinner } from 'reactstrap';
 import { connect } from 'react-redux';
 import { setRegisterUser, setCurrentUser } from '../redux/auth/action';
 
@@ -47,7 +47,9 @@ class RegisterPages extends Component {
           <FontAwesomeIcon icon={faPaperPlane} size="6x" color="#007bff" />
           <Input type="text" className="form-control my-2" placeholder="Your Name" name="name" value={name} onChange={this.onChange} />
           <Input type="email" className="form-control my-2" placeholder="Your Email" name="email" value={email} onChange={this.onChange} />
-          <Button block={true} color="primary" type="submit" size="lg">Register</Button>
+          <Button block={true} disabled={this.props.isLoading} color="primary" type="submit" size="lg">
+            {this.props.isLoading &&
+              <Spinner size="sm" color="secondary" />} Register</Button>
           <div className="my-3">
             <Link className="my-5 text-muted" to="/">Back to Login</Link>
           </div>
@@ -64,6 +66,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
+  isLoading: state.auth.isLoading || false,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterPages)

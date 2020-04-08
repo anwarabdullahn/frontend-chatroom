@@ -7,8 +7,6 @@ export default function index(props) {
   return (
     <div className={className} style={{
       height: '100vh',
-      background: '#136a8a',
-      background: '-webkit-linear-gradient(to right, #267871, #136a8a)',
       background: 'linear-gradient(to right, #267871, #136a8a)',
 
     }}>
