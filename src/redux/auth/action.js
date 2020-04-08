@@ -6,6 +6,7 @@ export const TYPE = {
   SET_CURRENT_USER: 'SET_CURRENT_USER',
   LOGOUT_REQUEST: 'LOGOUT_REQUEST',
   LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
+  AUTH_ERROR: 'AUTH_ERROR',
 }
 
 export const setCurrentUser = () => ({
@@ -38,4 +39,8 @@ export const setRegisterUser = data => ({
 export const registerUserSuccess = data => ({
   type: TYPE.REGISTER_SUCCESS,
   payload: data,
+});
+
+export const authError = () => ({
+  type: TYPE.AUTH_ERROR,
 });

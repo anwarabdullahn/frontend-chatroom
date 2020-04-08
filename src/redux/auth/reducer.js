@@ -23,6 +23,7 @@ export default (state = initialState, action) => {
         isLoading: false,
       }
     case TYPE.LOGOUT_SUCCESS:
+    case TYPE.AUTH_ERROR:
       return {
         ...state,
         isAuthenticated: false,

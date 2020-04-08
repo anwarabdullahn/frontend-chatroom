@@ -1,5 +1,5 @@
 import { fork, put, takeLatest, takeEvery } from 'redux-saga/effects';
-import { TYPE, registerUserSuccess, loginUserSuccess, logoutUserSuccess } from './action';
+import { TYPE, registerUserSuccess, loginUserSuccess, logoutUserSuccess, authError } from './action';
 import * as AuthService from './service';
 import openNotification, { TYPE as NOTIF_TYPE } from '../../utils/notification';
 import { setToken } from '../../utils/api';
@@ -30,6 +30,7 @@ function* loginUser(action) {
     localStorage.setItem('user', JSON.stringify(res.data));
     yield put(loginUserSuccess(res))
   } catch (error) {
+    yield put(authError());
     const err = error.response;
     openNotification(NOTIF_TYPE.ERROR, err.data.message, err.data.error[[Object.keys(err.data.error)[0]]]);
   }
@@ -42,6 +43,7 @@ function* registerUser(action) {
     openNotification(NOTIF_TYPE.SUCCESS, res.message);
     yield put(registerUserSuccess(res.data));
   } catch (error) {
+    yield put(authError());
     const err = error.response;
     openNotification(NOTIF_TYPE.ERROR, err.data.message, err.data.error[[Object.keys(err.data.error)[0]]]);
   }
